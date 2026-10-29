@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="description" content="Prototyp für den Website-Relaunch von ASSISTENTIUM. Nicht öffentlich.">
+<title>Assistentium Prototyp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;500;700;800&display=swap">
+<style>
+/* Layout: Split-Bühne aus dem Template (Text | Bild im Kreis), Angebote und Jobs als Zeilen statt Kacheln,
+   Kreise nur für Menschenbilder, Play-Button und Pfeile. Volle Farbbänder in Grün und Tinte. Mobile first. */
+:root {
+  --lime: #C7D401;        /* Markengrün, nur als Fläche mit dunklem Text */
+  --lime-soft: #EEF2B8;
+  --ink: #16190B;         /* Tinte mit leichtem Grünstich */
+  --ink-soft: #4A4F3B;
+  --paper: #FFFFFF;
+  --mist: #F4F6EC;
+  --line: #D6DAC4;
+  --link: #0000FF;        /* Markenblau, nur für Textlinks und Fokus */
+  --display: "Montserrat", "Segoe UI", system-ui, sans-serif;
+  --body: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --step-0: 1.125rem;
+  --step-1: 1.35rem;
+  --step-2: clamp(1.6rem, 1.2rem + 1.6vw, 2.2rem);
+  --step-3: clamp(2.1rem, 1.4rem + 3vw, 3.4rem);
+  --step-4: clamp(2.5rem, 1.5rem + 4.6vw, 4.9rem);
+  --space: clamp(56px, 8vw, 112px);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--body); font-size: var(--step-0); line-height: 1.6; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: var(--paper); }
+h1, h2, h3 { font-family: var(--display); line-height: 1.08; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+h1 { font-size: var(--step-4); font-weight: 800; }
+h2 { font-size: var(--step-3); font-weight: 800; }
+h3 { font-size: var(--step-1); font-weight: 700; }
+.light { font-weight: 300; }
+p { margin: 0; max-width: 62ch; }
+a { color: var(--link); text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--link); outline-offset: 3px; }
+.wrap { max-width: 1200px; margin-inline: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.section { padding-block: var(--space); }
+section[id], [id^="h-"] { scroll-margin-top: calc(88px + env(safe-area-inset-top, 0px)); }
+.stack { display: flex; flex-direction: column; gap: 20px; }
+.skip { position: absolute; left: 16px; top: -100px; background: var(--ink); color: var(--paper); padding: 12px 18px; z-index: 100; font-weight: 700; }
+.skip:focus { top: calc(12px + env(safe-area-inset-top, 0px)); }
+
+/* Prototyp-Hinweise */
+.proto-bar { background: var(--ink); color: var(--lime-soft); font-size: 0.85rem; }
+.proto-bar .wrap { padding-block: 8px; display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.proto-note { border: 2px dashed var(--ink-soft); padding: 12px 16px; font-size: 0.9rem; color: var(--ink-soft); max-width: 62ch; background: var(--paper); }
+.proto-note strong { color: var(--ink); }
+
+/* Bild-Platzhalter */
+.ph { margin: 0; display: grid; place-items: center; text-align: center; padding: 24px; color: var(--ink-soft); font-size: 0.9rem; line-height: 1.4;
+  background: repeating-linear-gradient(135deg, var(--mist) 0 14px, var(--paper) 14px 28px); border: 1px solid var(--line); max-width: 100%; }
+.ph span { background: var(--paper); padding: 6px 10px; max-width: 30ch; }
+.ph-circle { border-radius: 50%; aspect-ratio: 1; }
+
+/* Buttons */
+.actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn { display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 12px 26px; border-radius: 999px; font-family: var(--display); font-weight: 700; font-size: 1rem; text-decoration: none; border: 2px solid var(--ink); transition: background .2s, color .2s; }
+.btn-primary { background: var(--ink); color: var(--paper); }
+.btn-primary:hover { background: var(--lime); color: var(--ink); }
+.btn-line { background: transparent; color: var(--ink); }
+.btn-line:hover { background: var(--ink); color: var(--paper); }
+.on-dark .btn-primary { background: var(--lime); color: var(--ink); border-color: var(--lime); }
+.on-dark .btn-primary:hover { background: var(--paper); border-color: var(--paper); }
+
+/* Header */
+.site-header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50; background: var(--paper); border-bottom: 1px solid var(--line); }
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 72px; padding-block: 12px; }
+.brand { display: block; line-height: 0; flex-shrink: 1; min-width: 0; }
+.brand img { height: auto; width: min(240px, 58vw); display: block; }
+.menu-btn { font: 700 1rem var(--display); background: var(--paper); color: var(--ink); border: 2px solid var(--ink); border-radius: 999px; min-height: 48px; padding: 8px 20px; cursor: pointer; }
+.menu-btn[aria-expanded="true"] { background: var(--ink); color: var(--paper); }
+#nav { position: absolute; inset: 100% 0 auto; background: var(--paper); border-bottom: 1px solid var(--line); }
+#nav ul { list-style: none; margin: 0; padding: 8px max(16px, env(safe-area-inset-right, 0px)) 20px max(16px, env(safe-area-inset-left, 0px)); }
+#nav a { display: block; padding: 14px 0; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; font: 700 1.25rem var(--display); }
+#nav a[aria-current="page"] { text-decoration: underline; text-decoration-color: var(--lime); text-decoration-thickness: 4px; text-underline-offset: 8px; }
+
+/* Hero */
+.hero { padding-block: 40px var(--space); overflow: hidden; }
+.hero-grid { display: grid; gap: 40px; align-items: center; }
+.hero-text { min-width: 0; display: flex; flex-direction: column; gap: 24px; }
+.lead { font-size: var(--step-1); line-height: 1.5; color: var(--ink-soft); }
+.hero-visual { position: relative; width: min(100%, 520px); justify-self: center; }
+.disc { position: absolute; width: 78%; aspect-ratio: 1; border-radius: 50%; background: var(--lime); right: -10%; top: -8%; animation: grow .9s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes grow { from { transform: scale(.85); } to { transform: scale(1); } }
+.hero-img { position: relative; width: 88%; }
+.play { position: absolute; left: 62%; bottom: 2%; display: flex; align-items: center; gap: 12px; background: none; border: 0; padding: 0; cursor: pointer; font: 700 0.95rem var(--display); color: var(--ink); text-align: left; }
+.play-ring { width: 72px; height: 72px; border-radius: 50%; background: var(--ink); display: grid; place-items: center; flex-shrink: 0; transition: transform .2s; }
+.play:hover .play-ring { transform: scale(1.06); }
+.play > span:last-child { white-space: nowrap; }
+.play small { display: block; font-weight: 500; color: var(--ink-soft); }
+
+/* Startseiten-Hero: Vollbild + Textblock (GFI x Template) */
+.hero-photo { position: relative; background: var(--ink); }
+.hero-photo .photo { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; max-width: 100%; object-fit: cover; object-position: 55% 45%; }
+.hero-panel { background: var(--ink); color: var(--paper); }
+.hero-panel .inner { padding-block: 36px 44px; display: flex; flex-direction: column; gap: 22px; }
+.hero-panel h1 { font-size: clamp(2.3rem, 1.4rem + 4.2vw, 4.4rem); }
+.hero-panel h1 .light { color: var(--lime); }
+.hero-panel .lead { color: #D9DCCB; }
+.hero-panel .btn-primary { background: var(--lime); border-color: var(--lime); color: var(--ink); }
+.hero-panel .btn-primary:hover { background: var(--paper); border-color: var(--paper); }
+.hero-panel .btn-line { color: var(--paper); border-color: var(--paper); }
+.hero-panel .btn-line:hover { background: var(--paper); color: var(--ink); }
+.credit { position: absolute; right: max(12px, env(safe-area-inset-right, 0px)); top: 10px; font-size: 0.75rem; background: rgba(255,255,255,.85); color: var(--ink); padding: 2px 8px; }
+.film-link { display: inline-flex; align-items: center; gap: 12px; background: none; border: 0; padding: 0; cursor: pointer; color: var(--paper); font: 700 1rem var(--display); }
+.film-link .play-ring { width: 48px; height: 48px; background: var(--lime); }
+.film-link small { font-weight: 500; color: #D9DCCB; }
+
+/* Leitbild-Kreis */
+.leitbild-grid { display: grid; gap: 48px; align-items: center; }
+.leitbild-grid > * { min-width: 0; }
+.manifest { font: 300 var(--step-2)/1.35 var(--display); max-width: 30ch; }
+.manifest b { font-weight: 800; }
+.leitbild { container-type: inline-size; width: min(100%, 560px); justify-self: center; margin: 0; }
+.leitbild-disc { aspect-ratio: 1; border-radius: 50%; background: var(--lime); color: var(--ink); display: grid; place-items: center; padding: 15%; text-align: center; overflow: hidden; font-family: var(--display); }
+.leitbild-disc h2 { font-size: 5.6cqi; font-weight: 800; letter-spacing: 0.01em; }
+.leitbild-disc .sub { display: block; font-size: 3cqi; font-weight: 500; margin-top: 1cqi; }
+.leitbild-disc p { font-size: 3.05cqi; line-height: 1.3; font-weight: 500; margin-top: 3cqi; max-width: none; }
+.leitbild-disc .k { font-size: 4.35cqi; font-weight: 700; }
+
+/* KOMPASS */
+.kompass { background: var(--paper); border-top: 1px solid var(--line); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.kompass-grid { display: grid; gap: 40px; align-items: center; }
+.kompass-grid > * { min-width: 0; }
+.k-logo { width: 154px; height: auto; }
+.kompass h2 { font-size: var(--step-3); }
+.kompass h2::after { content: ""; display: block; width: 96px; height: 4px; background: var(--lime); margin-top: 22px; }
+.k-pillars { font: 700 1.15rem/1.4 var(--display); }
+.k-photo { margin: 0; width: 100%; max-width: 100%; }
+.k-photo img { display: block; width: 100%; height: auto; }
+.kompass .tagline { font: 300 var(--step-2)/1.3 var(--display); }
+.kompass .tagline b { font-weight: 800; }
+.paths { display: grid; gap: 40px; margin-top: 48px; }
+.paths > div { min-width: 0; display: flex; flex-direction: column; gap: 16px; border-top: 2px solid var(--ink); padding-top: 20px; }
+.paths ul { margin: 0; padding: 0; list-style: none; }
+.paths li { padding: 10px 0 10px 30px; border-bottom: 1px solid rgba(22,25,11,.18); position: relative; }
+.paths li::before { content: ""; position: absolute; left: 0; top: 18px; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--ink); }
+
+/* Schwerpunkt-Block */
+.focus { background: var(--mist); padding: clamp(24px, 4vw, 48px); margin-bottom: 48px; }
+.badge { align-self: flex-start; background: var(--lime); color: var(--ink); font: 700 0.85rem var(--display); padding: 4px 14px; border-radius: 999px; }
+
+/* Claim-Band */
+.claim { background: var(--lime); }
+.claim .wrap { padding-block: 28px; }
+.claim p { font: 800 clamp(1.5rem, 1rem + 3.4vw, 3.6rem)/1.05 var(--display); text-transform: uppercase; letter-spacing: 0.01em; max-width: none; }
+.claim .light { font-weight: 300; }
+
+/* Fakten als Definitionsliste */
+.facts { margin: 0; border-top: 2px solid var(--ink); }
+.facts div { display: grid; gap: 4px; padding-block: 18px; border-bottom: 1px solid var(--line); }
+.facts dt { font: 700 0.95rem var(--display); text-transform: uppercase; letter-spacing: 0.06em; }
+.facts dd { margin: 0; color: var(--ink-soft); }
+.split { display: grid; gap: 40px; }
+.split > * { min-width: 0; }
+.more { font: 700 1.05rem var(--display); color: var(--ink); text-decoration-color: var(--lime); text-decoration-thickness: 4px; text-underline-offset: 6px; }
+.more:hover { text-decoration-color: var(--ink); }
+
+/* Zeilen-Listen (Angebote, Jobs) */
+.rows { list-style: none; margin: 0; padding: 0; border-top: 2px solid currentColor; }
+.rows li { border-bottom: 1px solid var(--line); }
+.row { display: grid; grid-template-columns: 1fr auto; gap: 8px 24px; align-items: center; padding: 26px 0; color: inherit; text-decoration: none; }
+.row > div { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.row h3 { font-size: var(--step-2); }
+.row p { color: var(--ink-soft); }
+.row .meta { font-size: 0.95rem; color: var(--ink-soft); }
+.arrow { width: 56px; height: 56px; border-radius: 50%; border: 2px solid currentColor; display: grid; place-items: center; transition: background .2s, transform .2s; }
+.row:hover .arrow, .row:focus-visible .arrow { background: var(--lime); border-color: var(--lime); color: var(--ink); transform: translateX(4px); }
+.row:hover h3 { text-decoration: underline; text-decoration-color: var(--lime); text-decoration-thickness: 4px; text-underline-offset: 6px; }
+.section-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 32px; }
+
+/* Film */
+.film { background: var(--mist); }
+.video { position: relative; aspect-ratio: 16 / 9; width: 100%; max-width: 100%; background: var(--ink); color: var(--paper); overflow: hidden; }
+.video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.video-poster { position: absolute; inset: 0; display: grid; place-items: center; padding: 16px; text-align: center; }
+.video-poster::before { content: ""; position: absolute; width: 62%; aspect-ratio: 1; border-radius: 50%; border: 2px solid rgba(199,212,1,.35); left: 58%; top: -18%; }
+.video-poster::after { content: ""; position: absolute; width: 38%; aspect-ratio: 1; border-radius: 50%; background: rgba(199,212,1,.12); left: -8%; bottom: -22%; }
+.video-start { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: clamp(10px, 2vw, 18px); background: none; border: 0; color: inherit; cursor: pointer; font-family: var(--display); padding: 8px; }
+.video-start .play-ring { width: clamp(64px, 11vw, 120px); height: auto; aspect-ratio: 1; background: var(--lime); }
+.video-start:hover .play-ring { transform: scale(1.06); }
+.video-title { font-weight: 800; font-size: clamp(1.1rem, 0.8rem + 1.6vw, 2rem); line-height: 1.15; }
+.video-title .light { font-weight: 300; }
+.video-consent { position: relative; z-index: 1; font-size: clamp(0.78rem, 0.7rem + 0.3vw, 0.9rem); color: #CFD3BF; max-width: 52ch; margin-top: clamp(4px, 1vw, 12px); }
+.video-consent a { color: var(--lime); }
+.film-caption { margin-top: 16px; color: var(--ink-soft); display: flex; flex-wrap: wrap; gap: 8px 24px; }
+@media (max-width: 520px) { .video-consent { display: none; } .film-caption .consent-mobile { display: block; } }
+.consent-mobile { display: none; width: 100%; font-size: 0.9rem; }
+
+/* Karriere */
+.on-dark { background: var(--ink); color: var(--paper); }
+.on-dark p, .on-dark .meta { color: #CFD3BF; }
+.on-dark .rows li { border-color: #3A3E2C; }
+.on-dark a:not(.btn):not(.row) { color: var(--lime); }
+.benefits { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.benefits li { border: 1px solid #555A44; border-radius: 999px; padding: 6px 16px; font-size: 0.95rem; }
+.places { margin-top: var(--space); padding-top: 32px; border-top: 1px solid #3A3E2C; }
+.places p { font: 300 clamp(1.4rem, 1rem + 2.4vw, 2.8rem)/1.25 var(--display); color: var(--paper); max-width: none; }
+.places b { font-weight: 800; color: var(--lime); }
+
+/* News */
+.news { display: grid; gap: 40px; }
+.news article { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.news .ph { aspect-ratio: 4 / 3; }
+.news .kind { font: 700 0.85rem var(--display); text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); }
+.news h3 a { color: var(--ink); text-decoration: none; }
+.news h3 a:hover { text-decoration: underline; text-decoration-color: var(--lime); text-decoration-thickness: 4px; }
+
+/* Unterstützen */
+.support { background: var(--lime); }
+.ways { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; border-top: 2px solid var(--ink); }
+.ways li { padding-block: 20px; border-bottom: 1px solid rgba(22,25,11,.25); display: flex; flex-direction: column; gap: 4px; }
+.ways strong { font: 700 1.2rem var(--display); }
+
+/* Kontakt + Footer */
+.contact-grid { display: grid; gap: 40px; }
+.people { list-style: none; margin: 0; padding: 0; display: grid; gap: 24px; }
+.people li { display: flex; flex-direction: column; gap: 2px; }
+.people .area { font: 700 0.85rem var(--display); text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); }
+.people .tel { font-variant-numeric: tabular-nums; font-weight: 700; user-select: all; }
+.partners { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: var(--space); }
+.partners .ph { min-height: 88px; padding: 12px; }
+.legal { border-top: 1px solid var(--line); margin-top: 48px; }
+.legal .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 0.95rem; color: var(--ink-soft); }
+.legal a { color: var(--ink); }
+
+/* Unterseite */
+.crumbs { font-size: 0.95rem; color: var(--ink-soft); }
+.crumbs a { color: var(--ink); }
+.goals { display: grid; gap: 40px; }
+.goals ul { margin: 16px 0 0; padding: 0; list-style: none; border-top: 2px solid var(--ink); }
+.goals li { padding: 12px 0 12px 32px; border-bottom: 1px solid var(--line); position: relative; }
+.goals li::before { content: ""; position: absolute; left: 0; top: 20px; width: 14px; height: 14px; border-radius: 50%; background: var(--lime); }
+.steps { list-style: none; margin: 32px 0 0; padding: 0; display: grid; gap: 0; counter-reset: s; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 64px 1fr; gap: 20px; padding-block: 22px; border-top: 1px solid var(--line); }
+.steps li > div { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.steps li::before { content: counter(s); width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--ink); display: grid; place-items: center; font: 800 1.3rem var(--display); }
+.steps li:first-child::before { background: var(--lime); border-color: var(--lime); }
+
+.rows-jobs .row { grid-template-columns: minmax(0, 1fr) auto !important; }
+@media (min-width: 760px) {
+  .split { grid-template-columns: 5fr 6fr; gap: 64px; align-items: start; }
+  .news { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
+  .goals { grid-template-columns: 1fr 1fr; gap: 48px; }
+  .contact-grid { grid-template-columns: 1fr 1.4fr; gap: 64px; }
+  .people { grid-template-columns: 1fr 1fr; }
+  .partners { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .row { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) auto; }
+  .row > div:first-child h3 { padding-right: 16px; }
+  .ways { grid-template-columns: repeat(3, 1fr); gap: 32px; border-top: 0; }
+  .ways li { border-top: 2px solid var(--ink); border-bottom: 0; }
+  .leitbild-grid { grid-template-columns: 5fr 6fr; gap: 64px; }
+  .paths { grid-template-columns: 1fr 1fr; gap: 48px; }
+  .kompass-grid { grid-template-columns: 5fr 6fr; gap: 56px; }
+  .hero-photo .photo { aspect-ratio: 16 / 9; }
+}
+@media (min-width: 900px) {
+  .hero-photo { min-height: min(78vh, 720px); display: flex; align-items: flex-end; }
+  .hero-photo .photo { position: absolute; inset: 0; height: 100%; aspect-ratio: auto; object-position: 50% 30%; }
+  .hero-photo .wrap { position: relative; width: 100%; padding-block: 0 56px; }
+  .hero-panel { width: min(520px, 46%); }
+  .hero-panel .inner { padding: 34px 38px 38px; gap: 18px; }
+  .hero-panel h1 { font-size: clamp(2.2rem, 1rem + 2.5vw, 3.3rem); }
+  .hero-panel .lead { font-size: 1.15rem; }
+}
+@media (min-width: 1040px) {
+  .menu-btn { display: none; }
+  #nav { position: static; border: 0; background: none; }
+  #nav ul { display: flex; gap: 28px; padding: 0; align-items: center; }
+  #nav a { border: 0; padding: 8px 0; font-size: 1rem; font-weight: 500; }
+  #nav a.nav-cta { border: 2px solid var(--ink); border-radius: 999px; padding: 8px 20px; font-weight: 700; }
+  #nav a.nav-cta:hover { background: var(--lime); border-color: var(--lime); }
+  #nav[hidden] { display: block !important; }
+  .brand img { width: 260px; }
+  .hero { padding-top: 72px; }
+  .hero-grid { grid-template-columns: 7fr 5fr; gap: 48px; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Zum Inhalt springen</a>
+
+<div class="proto-bar" role="note"><div class="wrap"><span><strong>Prototyp</strong> · Stand 29.10.2026</span><span>Gestreifte Flächen und das Hero-Foto sind Platzhalter</span><span>Gestrichelte Kästen sind Notizen zur Abstimmung</span></div></div>
+
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="#start"><img src="assets/assistentium-logo.png" alt="ASSISTENTIUM, zur Startseite" width="720" height="70"></a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav">Menü</button>
+    <nav id="nav" aria-label="Hauptnavigation" hidden>
+      <ul>
+        <li><a href="#leistungen" data-nav="schulbegleitung">Leistungen</a></li>
+        <li><a href="#kompass">KOMPASS</a></li>
+        <li><a href="#ueber-uns">Über uns</a></li>
+        <li><a href="#karriere">Karriere</a></li>
+        <li><a href="#aktuelles">Aktuelles</a></li>
+        <li><a href="#unterstuetzen">Unterstützen</a></li>
+        <li><a class="nav-cta" href="#kontakt">Kontakt</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+
+<!-- ============ STARTSEITE ============ -->
+<div data-view="start">
+
+  <section class="hero-photo" aria-labelledby="h-start">
+    <img class="photo" src="assets/hero-team.jpg" alt="Mehrere Menschen stehen im Kreis und stoßen ihre Fäuste in der Mitte zusammen, von unten fotografiert" width="1800" height="1200">
+    <span class="credit">Platzhalterfoto (Pexels), später Standbild aus dem Imagefilm</span>
+    <div class="wrap">
+      <div class="hero-panel">
+        <div class="inner">
+          <h1 id="h-start"><span class="light">Inklusion gelingt</span> mit der richtigen Begleitung.</h1>
+          <p class="lead">Wir begleiten Kinder in der Schule, Familien in schwierigen Zeiten und Menschen in ihrem Alltag und Zuhause. Aus Wedel, im ganzen Kreis Pinneberg.</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="#leistungen">Unsere Leistungen</a>
+            <a class="btn btn-line" href="#karriere">Offene Stellen</a>
+          </div>
+          <button class="film-link" type="button" data-film>
+            <span class="play-ring" aria-hidden="true"><svg width="16" height="18" viewBox="0 0 22 24"><path d="M2 2l18 10L2 22z" fill="#16190B"/></svg></span>
+            <span>Imagefilm ansehen</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="ueber-uns" aria-label="Wofür wir stehen">
+    <div class="wrap leitbild-grid">
+      <div class="stack" style="gap:28px">
+        <p class="manifest"><b>Weil</b> Schule mehr ist als Lesen, Schreiben und Rechnen. Und weil Inklusion nur gelingt, wenn Menschen mit Unterstützungsbedarf die <b>individuelle Hilfe</b> bekommen, die sie sich wünschen und brauchen.</p>
+        <p>ASSISTENTIUM ist eine gemeinnützige GmbH aus Wedel. Mit unserem Team begleiten wir Kinder, Jugendliche, Familien und Erwachsene im Kreis Pinneberg.</p>
+        <a class="more" href="#kontakt">Team kennenlernen</a>
+      </div>
+      <figure class="leitbild">
+        <div class="leitbild-disc">
+          <div>
+            <h2>ASSISTENTIUM<span class="sub">steht für:</span></h2>
+            <p>Die wirksamste <span class="k">Begleitung</span>, <span class="k">Unterstützung</span> und <span class="k">Förderung</span> für jeden <span class="k">Menschen</span> in seinen <span class="k">individuellen Bedarfssituationen</span>, mit dem <span class="k">Ziel</span> ihm ein möglichst <span class="k">unabhängiges, selbstwirksames Leben</span> zu <span class="k">ermöglichen</span> und dabei auf <span class="k">Augenhöhe</span> mit allen Akteuren <span class="k">zuverlässig, lösungsorientiert</span> und <span class="k">wertschätzend</span> zu handeln.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" id="leistungen" aria-labelledby="h-leist" style="padding-top:0">
+    <div class="wrap">
+      <div class="section-head"><h2 id="h-leist"><span class="light">Unsere</span> Leistungen</h2></div>
+
+      <div class="focus split">
+        <div class="stack">
+          <h3 style="font-size:var(--step-3)">Schulbegleitung</h3>
+          <p>Unsere Schulbegleiter*innen sind an der Seite von Kindern, die ihren Schulalltag noch nicht allein schaffen. Sie geben Sicherheit, helfen beim Lernen und dabei, in der Klasse anzukommen.</p>
+          <a class="more" href="#schulbegleitung">Mehr zur Schulbegleitung</a>
+        </div>
+        <dl class="facts">
+          <div><dt>Für wen</dt><dd>Kinder und Jugendliche mit (drohender) seelischer, geistiger oder körperlicher Behinderung</dd></div>
+          <div><dt>Ziel</dt><dd>So viel Selbständigkeit wie möglich, bis hin zum Schulabschluss</dd></div>
+          <div><dt>Kosten</dt><dd>Kostenträger ist der Kreis Pinneberg. Wir erklären Ihnen, wie der Antrag läuft.</dd></div>
+        </dl>
+      </div>
+
+      <ul class="rows">
+        <li><a class="row" href="#leistungen">
+          <div><h3>Familienhilfe</h3></div>
+          <div><p>Sozialpädagogische Familienhilfe und Erziehungsbeistand, wenn es zu Hause oder in der Schule gerade schwer ist.</p><span class="meta">Für Familien und junge Menschen · nach § 30 und § 31 SGB VIII</span></div>
+          <span class="arrow" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M3 10h13M11 4l6 6-6 6" stroke="currentColor" stroke-width="2.2" fill="none"/></svg></span>
+        </a></li>
+        <li><a class="row" href="#leistungen">
+          <div><h3>Alltagsbegleitung &amp; FED</h3></div>
+          <div><p>Betreuung, stundenweise Entlastung für Angehörige und Hilfe im Haushalt, einzeln oder in der Gruppe.</p><span class="meta">Für pflegebedürftige Menschen ab Pflegegrad 1 und ihre Familien</span></div>
+          <span class="arrow" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M3 10h13M11 4l6 6-6 6" stroke="currentColor" stroke-width="2.2" fill="none"/></svg></span>
+        </a></li>
+        <li><a class="row" href="#leistungen">
+          <div><h3>Kreativ-Raum &amp; Schreibwerkstatt</h3></div>
+          <div><p>Malen, gestalten und eigene Geschichten schreiben, ohne Noten und in kleiner Gruppe. Die erste Stunde ist kostenlos.</p><span class="meta">Für Kinder und Jugendliche von 6 bis 17 · Wedel</span></div>
+          <span class="arrow" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M3 10h13M11 4l6 6-6 6" stroke="currentColor" stroke-width="2.2" fill="none"/></svg></span>
+        </a></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section kompass" id="kompass" aria-labelledby="h-kompass">
+    <div class="wrap">
+      <div class="kompass-grid">
+        <div class="stack" style="gap:24px">
+          <img class="k-logo" src="assets/kompass-logo.png" alt="KOMPASS by ASSISTENTIUM" width="154" height="66">
+          <h2 id="h-kompass"><span class="sr">KOMPASS: </span>Ein Ansprechpartner. <span class="light">Viele Lösungen.</span></h2>
+          <p class="k-pillars">Orientierung · Begleitung · Vernetzung · Prävention</p>
+          <p>Menschen brauchen heute mehr als Wohnraum. Sie brauchen Sicherheit, Hilfe und einen verlässlichen Ansprechpartner. KOMPASS begleitet Menschen genau dort, wo Unterstützung beginnt: im eigenen Zuhause, im Quartier, im Alltag.</p>
+          <p>Hausverwaltung, Angehörige, Ärzte, Krankenhaus, Behörden, Pflegekasse, Pflegedienste und Nachbarschaft laufen bei einem festen Ansprechpartner zusammen.</p>
+        </div>
+        <figure class="k-photo"><img src="assets/kompass-wohnanlage.jpg" alt="Ein älteres Paar sitzt auf einer Bank im begrünten Innenhof einer Wohnanlage" width="421" height="354"></figure>
+      </div>
+      <p class="proto-note" style="margin-top:32px"><strong>Zur Abstimmung:</strong> Logo und Bild stammen aus einem Screenshot der KOMPASS-Präsentation. Für den Livegang brauchen wir die Originaldateien. Außerdem heißt das interne Schulungsprogramm fast gleich (Kom*P*ASS); nur ein Angebot sollte diesen Namen tragen.</p>
+      <div class="paths">
+        <div>
+          <h3>Für Bewohnerinnen und Bewohner</h3>
+          <ul>
+            <li>Begleitung im Alltag und bei Familienfragen</li>
+            <li>Unterstützung nach dem Krankenhaus</li>
+            <li>Hilfe bei Anträgen und Behördengängen</li>
+            <li>Kleine Alltagsfragen, vom Brief der Hausverwaltung bis zur Mülltrennung</li>
+          </ul>
+          <a class="more" href="#kontakt">KOMPASS nutzen</a>
+        </div>
+        <div>
+          <h3>Für Wohnungsunternehmen</h3>
+          <ul>
+            <li>Konflikte früh entschärfen, Hausverwaltung entlasten</li>
+            <li>Stabile Nachbarschaften und zufriedenere Mieter</li>
+            <li>Werterhalt der Immobilie und ESG-Mehrwert</li>
+            <li>Pilotprojekt über 6 Monate mit Sprechstunden, Hausbesuchen und Auswertung</li>
+          </ul>
+          <a class="more" href="#kontakt">Pilotprojekt anfragen</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section film" id="film" aria-labelledby="h-film">
+    <div class="wrap">
+      <div class="section-head"><h2 id="h-film"><span class="light">So arbeiten</span> wir</h2></div>
+      <div class="video" id="video" data-yt="Okksk3Sx33U">
+        <div class="video-poster">
+          <div>
+            <button class="video-start" type="button" id="video-start">
+              <span class="play-ring" aria-hidden="true"><svg width="34" height="36" viewBox="0 0 22 24"><path d="M2 2l18 10L2 22z" fill="#16190B"/></svg></span>
+              <span class="video-title"><span class="light">Imagefilm</span> ASSISTENTIUM</span>
+              <span class="sr">abspielen, lädt das Video von YouTube</span>
+            </button>
+            <p class="video-consent">Mit Klick wird das Video von YouTube geladen. Dabei werden Daten an Google übertragen. Mehr dazu in unserer <a href="#kontakt">Datenschutzerklärung</a>.</p>
+          </div>
+        </div>
+      </div>
+      <p class="film-caption"><span class="consent-mobile">Mit Klick auf Abspielen wird das Video von YouTube geladen und Daten werden an Google übertragen.</span><a href="https://www.youtube.com/watch?v=Okksk3Sx33U" target="_blank" rel="noopener">Film auf YouTube ansehen</a></p>
+    </div>
+  </section>
+
+  <section class="section on-dark" id="karriere" aria-labelledby="h-karriere">
+    <div class="wrap">
+      <div class="split">
+        <div class="stack">
+          <h2 id="h-karriere"><span class="light">Arbeit, die etwas bewegt.</span> Direkt bei dir um die Ecke.</h2>
+          <p>Ob mit Ausbildung oder als Quereinsteiger*in: Wir bereiten dich mit unserem eigenen Schulungsprogramm auf deine Aufgabe vor, mit Themen wie Kinderschutz, Autismus, AD(H)S, Kommunikation und Erste Hilfe.</p>
+          <ul class="benefits" aria-label="Was wir bieten">
+            <li>30 Tage Urlaub</li><li>Jobticket</li><li>Betriebliche Altersvorsorge</li><li>Krankenzusatzversicherung</li><li>Corporate Benefits</li><li>Fortbildungen</li>
+          </ul>
+          <div class="actions"><a class="btn btn-primary" href="#kontakt">Initiativ bewerben</a></div>
+        </div>
+        <ul class="rows rows-jobs" aria-label="Offene Stellen">
+          <li><a class="row" href="#karriere"><div><h3>Schulbegleiter*in</h3><span class="meta">Teilzeit · ab sofort · auch Quereinstieg</span></div><span class="arrow" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M3 10h13M11 4l6 6-6 6" stroke="currentColor" stroke-width="2.2" fill="none"/></svg></span></a></li>
+          <li><a class="row" href="#karriere"><div><h3>Erzieher*in / pädagogische Fachkraft</h3><span class="meta">Teilzeit · ab sofort · frei in den Ferien</span></div><span class="arrow" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M3 10h13M11 4l6 6-6 6" stroke="currentColor" stroke-width="2.2" fill="none"/></svg></span></a></li>
+          <li><a class="row" href="#karriere"><div><h3>Sozialpädagog*in</h3><span class="meta">Teil- oder Vollzeit · angelehnt an TVöD SuE</span></div><span class="arrow" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M3 10h13M11 4l6 6-6 6" stroke="currentColor" stroke-width="2.2" fill="none"/></svg></span></a></li>
+          <li><a class="row" href="#karriere"><div><h3>Alltagsbegleiter*in</h3><span class="meta">Teilzeit · flexible Arbeitszeiten</span></div><span class="arrow" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M3 10h13M11 4l6 6-6 6" stroke="currentColor" stroke-width="2.2" fill="none"/></svg></span></a></li>
+        </ul>
+      </div>
+      <div class="places">
+        <p><b>Wedel</b> · Elmshorn · Uetersen · Pinneberg · Moorrege · Appen <span class="light">und weitere Orte im Kreis Pinneberg</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="aktuelles" aria-labelledby="h-news">
+    <div class="wrap">
+      <div class="section-head"><h2 id="h-news">Aktuelles</h2><a class="more" href="#aktuelles">Alle Beiträge</a></div>
+      <div class="news">
+        <article>
+          <figure class="ph"><span>Foto: verpackte Geschenke unterm Baum</span></figure>
+          <span class="kind">Aktion</span>
+          <h3><a href="#aktuelles">Tannenbaumaktion 2026</a></h3>
+          <p>Mit 50 € schenken Sie fünf Kindern aus der Schulbegleitung ein Weihnachtsgeschenk. Die Geschenke verteilen wir über die Schulen.</p>
+        </article>
+        <article>
+          <figure class="ph"><span>Grafik: Förderpenny-Siegel</span></figure>
+          <span class="kind">Förderung</span>
+          <h3><a href="#aktuelles">Wir sind Förderpenny-Gewinner 2025/26</a></h3>
+          <p>Sagen Sie an der PENNY-Kasse „Stimmt so!“ oder aktivieren Sie den Förderpenny in der App. Jeder Cent geht an uns.</p>
+        </article>
+        <article>
+          <figure class="ph"><span>Foto: Mädchengruppe beim gemeinsamen Basteln</span></figure>
+          <span class="kind">Projekt</span>
+          <h3><a href="#aktuelles">Miteinander stark</a></h3>
+          <p>Eine Empowerment-Gruppe für Mädchen mit Trisomie 21: Gemeinschaft, Selbstvertrauen und Teilhabe in geschütztem Raum.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section support" id="unterstuetzen" aria-labelledby="h-support">
+    <div class="wrap stack" style="gap:32px">
+      <h2 id="h-support"><span class="light">Helfen Sie</span> mit.</h2>
+      <p>Als gemeinnützige GmbH finanzieren wir Projekte wie die Mädchengruppe oder die Tannenbaumaktion über Spenden.</p>
+      <ul class="ways">
+        <li><strong>Förderpenny</strong><span>An der PENNY-Kasse aufrunden oder in der App aktivieren</span></li>
+        <li><strong>betterplace</strong><span>Online für „Miteinander stark“ spenden</span></li>
+        <li><strong>Überweisung</strong><span>Spendenkonto und Verwendungszweck stehen bei jeder Aktion</span></li>
+      </ul>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============ UNTERSEITE SCHULBEGLEITUNG ============ -->
+<div data-view="schulbegleitung" hidden>
+
+  <section class="hero" aria-labelledby="h-sb">
+    <div class="wrap hero-grid">
+      <div class="hero-text">
+        <p class="crumbs"><a href="#start">Start</a> / Schulbegleitung</p>
+        <h1 id="h-sb" tabindex="-1"><span class="light">Schul</span>begleitung</h1>
+        <p class="lead">Damit Kinder mit Unterstützungsbedarf an der Schule in ihrem Wohnort lernen können, so selbständig wie möglich.</p>
+        <div class="actions"><a class="btn btn-primary" href="#sb-kontakt">Beratung anfragen</a></div>
+      </div>
+      <div class="hero-visual">
+        <div class="disc" aria-hidden="true"></div>
+        <figure class="ph ph-circle hero-img"><span>Standbild aus dem Imagefilm: Begleitung bei der Gruppenarbeit</span></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0" aria-labelledby="h-sb-wer">
+    <div class="wrap split">
+      <div class="stack">
+        <h2 id="h-sb-wer">Wer wir begleiten</h2>
+        <p>Kinder und Jugendliche mit (drohender) Behinderung, die ihren Schulalltag noch nicht allein bewältigen. Wir schauen genau hin, was ein Kind braucht, und stimmen die Begleitung auf den echten Schulalltag ab.</p>
+      </div>
+      <dl class="facts">
+        <div><dt>Rechtsgrundlage</dt><dd>Eingliederungshilfe nach § 35a SGB VIII</dd></div>
+        <div><dt>Kostenträger</dt><dd>Kreis Pinneberg, Fachbereich Familie, Teilhabe und Soziales</dd></div>
+        <div><dt>Einsatzorte</dt><dd>Schulen in Wedel, Elmshorn, Uetersen, Pinneberg und Umgebung</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="section film" aria-labelledby="h-sb-ziele">
+    <div class="wrap">
+      <h2 id="h-sb-ziele"><span class="light">Woran wir</span> gemeinsam arbeiten</h2>
+      <div class="goals" style="margin-top:40px">
+        <div>
+          <h3>Miteinander in der Klasse</h3>
+          <ul>
+            <li>Ankommen im Klassenverband</li>
+            <li>Kontakt zu anderen Kindern und Freundschaften</li>
+            <li>Mit Streit und Konflikten umgehen</li>
+            <li>Eigene Gefühle und Bedürfnisse ausdrücken</li>
+            <li>Nähe und Distanz einschätzen</li>
+            <li>Schutz in schwierigen Situationen</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Lernen und Arbeiten</h3>
+          <ul>
+            <li>Eigene Stärken erkennen und nutzen</li>
+            <li>Aufgaben strukturieren und visualisieren</li>
+            <li>Aktiv am Unterricht teilnehmen</li>
+            <li>Konzentriert bei der Sache bleiben</li>
+            <li>Arbeitspläne erstellen und abarbeiten</li>
+            <li>Sich selbst organisieren</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="h-sb-weg">
+    <div class="wrap split">
+      <div class="stack">
+        <h2 id="h-sb-weg"><span class="light">Der Weg</span> zur Begleitung</h2>
+        <p>Den Antrag stellen die Sorgeberechtigten beim Kreis. Wir sind von Anfang an ansprechbar.</p>
+        <p class="proto-note"><strong>Zur Abstimmung:</strong> Ablauf und Formulierungen bitte mit Assistentium prüfen.</p>
+      </div>
+      <ol class="steps">
+        <li><div><h3>Sie melden sich bei uns</h3><p>Wir besprechen, was Ihr Kind braucht und wie die Begleitung aussehen kann.</p></div></li>
+        <li><div><h3>Antrag beim Kreis Pinneberg</h3><p>Sie beantragen die Eingliederungshilfe. Wir sagen Ihnen, welche Unterlagen nötig sind.</p></div></li>
+        <li><div><h3>Kostenzusage</h3><p>Der Kreis prüft den Bedarf und bewilligt die Stunden.</p></div></li>
+        <li><div><h3>Start an der Schule</h3><p>Wir stellen eine passende Begleitung zusammen und stimmen uns mit Schule und Elternhaus ab.</p></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section support" id="sb-kontakt" aria-labelledby="h-sb-kontakt">
+    <div class="wrap split">
+      <div class="stack">
+        <h2 id="h-sb-kontakt"><span class="light">Fragen zur</span> Schulbegleitung?</h2>
+        <p>Rufen Sie uns an. Infos des Kreises für Eltern finden Sie auf der <a href="https://www.kreis-pinneberg.de/Verwaltung/Fachbereich+Familie_+Teilhabe+und+Soziales/Fachdienst+Jugend_+Soziale+Dienste/Abteilung+Eingliederungshilfe+f%C3%BCr+Kinder+und+Jugendliche/Leistungen+zur+Teilhabe+nach+dem+SGB+VIII.html" target="_blank" rel="noopener">Seite der Eingliederungshilfe</a>.</p>
+      </div>
+      <ul class="people">
+        <li><span class="area">Geschäftsführung</span><strong>Berit Johannsen</strong><span class="tel">[Platzhalter Telefonnummer]</span></li>
+        <li><span class="area">Geschäftsführung</span><strong>Sabrina Gollian</strong><span class="tel">[Platzhalter Telefonnummer]</span></li>
+        <li><span class="area">Büro</span><strong>Mo bis Fr, 8 bis 12 Uhr</strong><span class="tel">+49 4103 187 17 60</span></li>
+      </ul>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============ KONTAKT (beide Ansichten) ============ -->
+<section class="section" id="kontakt" aria-labelledby="h-kontakt">
+  <div class="wrap contact-grid">
+    <div class="stack">
+      <h2 id="h-kontakt">Kontakt</h2>
+      <p><strong>ASSISTENTIUM gGmbH</strong><br>Rosengarten 8<br>22880 Wedel</p>
+      <p>Telefon <span class="tel" style="font-weight:700">+49 4103 187 17 60</span><br>Mo bis Fr, 8 bis 12 Uhr</p>
+    </div>
+    <ul class="people">
+      <li><span class="area">Schulbegleitung &amp; Bewerbungen</span><strong>Berit Johannsen</strong><span class="tel">[Platzhalter Telefonnummer]</span></li>
+      <li><span class="area">Schulbegleitung &amp; Bewerbungen</span><strong>Sabrina Gollian</strong><span class="tel">[Platzhalter Telefonnummer]</span></li>
+      <li><span class="area">Alltagsbegleitung &amp; KOMPASS</span><strong>Frau Behrendt</strong><span class="tel">[Platzhalter Telefonnummer]</span></li>
+      <li><span class="area">Büro &amp; Kurse</span><strong>Anja Heeßel</strong><span class="tel">[Platzhalter Telefonnummer]</span></li>
+    </ul>
+  </div>
+  <div class="wrap">
+    <div class="partners" aria-label="Partner und Siegel">
+      <div class="ph"><span>Logo Aktion Mensch</span></div>
+      <div class="ph"><span>Logo Offizieller Praxispartner</span></div>
+      <div class="ph"><span>Logo Diingu</span></div>
+      <div class="ph"><span>Logo VDU</span></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="legal">
+  <div class="wrap">
+    <span>© 2026 ASSISTENTIUM gGmbH</span>
+    <a href="#kontakt">Impressum</a><a href="#kontakt">Datenschutz</a><a href="#kontakt">Barrierefreiheit</a>
+    <a href="https://www.instagram.com/assistentium/" target="_blank" rel="noopener">Instagram</a>
+    <a href="https://www.facebook.com/Assistentium/" target="_blank" rel="noopener">Facebook</a>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var views = document.querySelectorAll('[data-view]');
+  var nav = document.getElementById('nav');
+  var btn = document.querySelector('.menu-btn');
+  var desktop = window.matchMedia('(min-width: 1040px)');
+
+  function setMenu(open) {
+    btn.setAttribute('aria-expanded', String(open));
+    btn.textContent = open ? 'Schließen' : 'Menü';
+    nav.hidden = !open && !desktop.matches;
+  }
+  btn.addEventListener('click', function () { setMenu(btn.getAttribute('aria-expanded') !== 'true'); });
+  desktop.addEventListener('change', function () { setMenu(false); });
+  setMenu(false);
+
+  function route() {
+    var h = location.hash.replace('#', '');
+    var target = (h === 'schulbegleitung') ? 'schulbegleitung' : 'start';
+    var changed = false;
+    views.forEach(function (v) {
+      var show = v.getAttribute('data-view') === target;
+      if (v.hidden === show) changed = true;
+      v.hidden = !show;
+    });
+    document.querySelectorAll('[data-nav]').forEach(function (a) {
+      if (a.getAttribute('data-nav') === target) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+    });
+    setMenu(false);
+    if (target === 'schulbegleitung') {
+      window.scrollTo(0, 0);
+      var h1 = document.getElementById('h-sb'); if (h1 && changed) h1.focus({ preventScroll: true });
+    } else if (h && h !== 'start') {
+      var el = document.getElementById(h);
+      if (el) el.scrollIntoView();
+    } else if (changed || h === 'start') {
+      window.scrollTo(0, 0);
+    }
+  }
+  window.addEventListener('hashchange', route);
+  route();
+
+  // Zwei-Klick-Lösung: YouTube (nocookie) lädt erst nach Klick auf Abspielen
+  var video = document.getElementById('video');
+  var start = document.getElementById('video-start');
+  start.addEventListener('click', function () {
+    var f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + video.getAttribute('data-yt') + '?autoplay=1&rel=0&modestbranding=1';
+    f.title = 'Imagefilm ASSISTENTIUM';
+    f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    f.allowFullscreen = true;
+    f.referrerPolicy = 'strict-origin-when-cross-origin';
+    video.innerHTML = '';
+    video.appendChild(f);
+    f.focus();
+  });
+
+  // "Imagefilm ansehen" im Hero führt zum Film
+  document.querySelectorAll('[data-film]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (document.querySelector('[data-view="start"]').hidden) location.hash = '#film';
+      else document.getElementById('film').scrollIntoView();
+      if (start.isConnected) start.focus({ preventScroll: true });
+    });
+  });
+})();
+</script>
+</body>
+</html>
